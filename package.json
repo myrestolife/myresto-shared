@@ -1,0 +1,27 @@
+{
+  "name": "@myresto/shared",
+  "version": "2.0.0",
+  "description": "Shared utilities and components for MyResto Next.js apps",
+  "type": "module",
+  "main": "./index.ts",
+  "exports": {
+    ".": "./index.ts",
+    "./lib/*": "./lib/*.ts",
+    "./lib/auth": "./lib/auth.tsx",
+    "./lib/authorization": "./lib/authorization.tsx",
+    "./lib/theme": "./lib/theme.tsx",
+    "./components/*": "./components/*.tsx"
+  },
+  "peerDependencies": {
+    "next": ">=15",
+    "react": ">=19",
+    "react-dom": ">=19",
+    "@supabase/supabase-js": ">=2"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "next": "^15.0.0"
+  }
+}
