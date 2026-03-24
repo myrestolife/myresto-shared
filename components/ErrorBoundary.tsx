@@ -23,19 +23,21 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    // Try to log to Sentry if available
-    try {
-      const Sentry = require('@sentry/nextjs');
-      Sentry.captureException(error, {
-        contexts: {
-          react: {
-            componentStack: errorInfo.componentStack,
+    // Try to log to Sentry if available (dynamic import for ESM compat)
+    const sentryModule = '@sentry/nextjs';
+    import(/* webpackIgnore: true */ sentryModule)
+      .then((Sentry: { captureException?: (e: Error, ctx?: unknown) => void }) => {
+        Sentry.captureException?.(error, {
+          contexts: {
+            react: {
+              componentStack: errorInfo.componentStack,
+            },
           },
-        },
+        });
+      })
+      .catch(() => {
+        // Sentry not installed — skip
       });
-    } catch {
-      // Sentry not installed — skip
-    }
 
     if (process.env.NODE_ENV === 'development') {
       console.error('ErrorBoundary caught an error:', error, errorInfo);

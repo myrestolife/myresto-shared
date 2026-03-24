@@ -22,19 +22,25 @@ export const APP_DOMAINS: Record<string, AppInfo> = {
  * 1. NEXT_PUBLIC_APP_ID env var (set per-app in Vercel)
  * 2. Hostname match (client-side)
  * 3. null
+ *
+ * Accepts optional overrides for testability.
  */
-export function getCurrentApp(): AppId | null {
-  const envId = process.env.NEXT_PUBLIC_APP_ID as AppId | undefined;
-  if (envId && isValidAppId(envId)) return envId;
+export function getCurrentApp(
+  envAppId?: string,
+  hostname?: string
+): AppId | null {
+  const id = envAppId ?? process.env.NEXT_PUBLIC_APP_ID;
+  if (id && isValidAppId(id)) return id;
 
-  if (typeof window !== "undefined") {
-    const entry = APP_DOMAINS[window.location.hostname];
+  const host = hostname ?? (typeof window !== "undefined" ? window.location.hostname : undefined);
+  if (host) {
+    const entry = APP_DOMAINS[host];
     if (entry) return entry.app;
   }
 
   return null;
 }
 
-function isValidAppId(v: string): v is AppId {
-  return ["event","garage","club","hub","gear","parts","life","show"].includes(v);
+export function isValidAppId(v: string): v is AppId {
+  return ["event", "garage", "club", "hub", "gear", "parts", "life", "show"].includes(v);
 }

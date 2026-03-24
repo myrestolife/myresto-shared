@@ -18,6 +18,25 @@ const STORAGE_KEY = "myresto-theme";
 const DEFAULT_THEME: Theme = "dark";
 
 // ---------------------------------------------------------------------------
+// Shared helpers
+// ---------------------------------------------------------------------------
+
+/** Determine the effective theme from storage or system preference. */
+function resolveTheme(): Theme {
+  if (typeof window === "undefined") return DEFAULT_THEME;
+  const stored = localStorage.getItem(STORAGE_KEY) as Theme | null;
+  if (stored === "dark" || stored === "light") return stored;
+  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+}
+
+/** Apply a theme to the DOM. */
+function applyTheme(theme: Theme): void {
+  if (typeof document !== "undefined") {
+    document.documentElement.dataset.theme = theme;
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Context
 // ---------------------------------------------------------------------------
 
@@ -36,18 +55,9 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
   // Read stored / system preference on mount
   useEffect(() => {
-    const stored = localStorage.getItem(STORAGE_KEY) as Theme | null;
-    if (stored === "dark" || stored === "light") {
-      setThemeState(stored);
-      document.documentElement.dataset.theme = stored;
-      return;
-    }
-
-    // Follow system preference
-    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    const initial = prefersDark ? "dark" : "light";
+    const initial = resolveTheme();
     setThemeState(initial);
-    document.documentElement.dataset.theme = initial;
+    applyTheme(initial);
   }, []);
 
   // Listen for system preference changes if no stored value
@@ -57,7 +67,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     const handler = (e: MediaQueryListEvent) => {
       const t: Theme = e.matches ? "dark" : "light";
       setThemeState(t);
-      document.documentElement.dataset.theme = t;
+      applyTheme(t);
     };
     mq.addEventListener("change", handler);
     return () => mq.removeEventListener("change", handler);
@@ -66,14 +76,14 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   const setTheme = useCallback((t: Theme) => {
     setThemeState(t);
     localStorage.setItem(STORAGE_KEY, t);
-    document.documentElement.dataset.theme = t;
+    applyTheme(t);
   }, []);
 
   const toggleTheme = useCallback(() => {
     setThemeState((prev) => {
       const next: Theme = prev === "dark" ? "light" : "dark";
       localStorage.setItem(STORAGE_KEY, next);
-      document.documentElement.dataset.theme = next;
+      applyTheme(next);
       return next;
     });
   }, []);
@@ -94,30 +104,25 @@ export function useTheme(): ThemeContextValue {
 }
 
 // ---------------------------------------------------------------------------
-// Legacy compat exports
+// Legacy compat exports (standalone functions, no context required)
 // ---------------------------------------------------------------------------
 
 export function initTheme(): void {
-  if (typeof window === "undefined") return;
-  const stored = localStorage.getItem(STORAGE_KEY) as Theme | null;
-  const theme = stored === "dark" || stored === "light"
-    ? stored
-    : window.matchMedia("(prefers-color-scheme: dark)").matches
-      ? "dark"
-      : "light";
-  document.documentElement.dataset.theme = theme;
+  applyTheme(resolveTheme());
 }
 
 export function getTheme(): Theme {
-  if (typeof window === "undefined") return DEFAULT_THEME;
-  const stored = localStorage.getItem(STORAGE_KEY) as Theme | null;
-  return stored === "dark" || stored === "light" ? stored : DEFAULT_THEME;
+  return resolveTheme();
 }
 
-export { setTheme };
-
-function setTheme(theme: Theme): void {
+/** Set theme directly (no provider needed). Renamed to avoid conflict with context method. */
+export function setStoredTheme(theme: Theme): void {
   if (typeof window === "undefined") return;
   localStorage.setItem(STORAGE_KEY, theme);
-  document.documentElement.dataset.theme = theme;
+  applyTheme(theme);
 }
+
+/**
+ * @deprecated Use `setStoredTheme` instead — kept for backwards compatibility.
+ */
+export { setStoredTheme as setTheme };

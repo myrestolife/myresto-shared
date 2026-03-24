@@ -14,73 +14,125 @@
  * ```
  */
 
+// ---------------------------------------------------------------------------
+// Custom error class
+// ---------------------------------------------------------------------------
+
+export class ApiError extends Error {
+  readonly status: number;
+  readonly url: string;
+  readonly body: unknown;
+
+  constructor(message: string, status: number, url: string, body?: unknown) {
+    super(message);
+    this.name = "ApiError";
+    this.status = status;
+    this.url = url;
+    this.body = body;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Types
+// ---------------------------------------------------------------------------
+
 export interface FetchOptions {
   method?: string;
   body?: unknown;
   token?: string | null;
   headers?: Record<string, string>;
+  /** Optional correlation ID; auto-generated if omitted. */
+  requestId?: string;
 }
 
+// ---------------------------------------------------------------------------
+// Internals
+// ---------------------------------------------------------------------------
+
+function generateRequestId(): string {
+  if (typeof crypto !== "undefined" && crypto.randomUUID) {
+    return crypto.randomUUID();
+  }
+  // Fallback for older environments
+  return `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+}
+
+/** Shared response handler for both fetch variants. */
+async function handleResponse<T>(res: Response, url: string): Promise<T> {
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({ error: res.statusText }));
+    throw new ApiError(
+      (body as Record<string, string>).error || `API error ${res.status}`,
+      res.status,
+      url,
+      body
+    );
+  }
+  return res.json();
+}
+
+/** Build common headers with auth + request ID. */
+function buildHeaders(
+  base: Record<string, string>,
+  token?: string | null,
+  requestId?: string
+): Record<string, string> {
+  const headers = { ...base };
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
+  }
+  headers["X-Request-Id"] = requestId || generateRequestId();
+  return headers;
+}
+
+// ---------------------------------------------------------------------------
+// Public API
+// ---------------------------------------------------------------------------
+
 /**
- * Create a typed API fetch function with a base URL
+ * Create a typed API fetch function with a base URL.
  */
-export function createApiFetch(baseUrl: string = '/api') {
+export function createApiFetch(baseUrl: string = "/api") {
   return async function apiFetch<T>(path: string, opts: FetchOptions = {}): Promise<T> {
-    const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
-      ...opts.headers,
-    };
+    const url = `${baseUrl}${path}`;
+    const headers = buildHeaders(
+      { "Content-Type": "application/json", ...opts.headers },
+      opts.token,
+      opts.requestId
+    );
 
-    if (opts.token) {
-      headers['Authorization'] = `Bearer ${opts.token}`;
-    }
-
-    const res = await fetch(`${baseUrl}${path}`, {
-      method: opts.method || 'GET',
+    const res = await fetch(url, {
+      method: opts.method || "GET",
       headers,
       body: opts.body ? JSON.stringify(opts.body) : undefined,
     });
 
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({ error: res.statusText }));
-      throw new Error(err.error || `API error ${res.status}`);
-    }
-
-    return res.json();
+    return handleResponse<T>(res, url);
   };
 }
 
 /**
  * Create a file upload function for binary uploads (images, etc.)
  */
-export function createFileUpload(baseUrl: string = '/api') {
+export function createFileUpload(baseUrl: string = "/api") {
   return async function uploadFile<T = { url: string }>(
     path: string,
     file: File,
     token?: string,
     additionalHeaders?: Record<string, string>
   ): Promise<T> {
-    const headers: Record<string, string> = {
-      'Content-Type': file.type,
-      'X-Content-Type': file.type,
-      ...additionalHeaders,
-    };
+    const url = `${baseUrl}${path}`;
+    const headers = buildHeaders(
+      { "Content-Type": file.type, "X-Content-Type": file.type, ...additionalHeaders },
+      token
+    );
 
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
-    }
-
-    const res = await fetch(`${baseUrl}${path}`, {
-      method: 'POST',
+    const res = await fetch(url, {
+      method: "POST",
       headers,
       body: file,
     });
 
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({ error: res.statusText }));
-      throw new Error(err.error || `Upload error ${res.status}`);
-    }
-
-    return res.json();
+    return handleResponse<T>(res, url);
   };
 }

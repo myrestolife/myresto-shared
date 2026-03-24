@@ -62,7 +62,9 @@ export function useAppRole(appOverride?: string): AppRoleResult {
 
       if (!cancelled) {
         if (error) {
-          console.error("useAppRole: failed to fetch roles", error);
+          if (process.env.NODE_ENV === "development") {
+            console.error("useAppRole: failed to fetch roles", error);
+          }
           setRoles([]);
         } else {
           setRoles((data ?? []).map((r: { role: string }) => r.role));
@@ -139,7 +141,9 @@ export function useSubscription(): SubscriptionResult {
 
       if (!cancelled) {
         if (error && error.code !== "PGRST116") {
-          console.error("useSubscription: failed to fetch subscription", error);
+          if (process.env.NODE_ENV === "development") {
+            console.error("useSubscription: failed to fetch subscription", error);
+          }
         }
         setSubscription(data ?? null);
         setLoading(false);
@@ -157,6 +161,18 @@ export function useSubscription(): SubscriptionResult {
 }
 
 // ---------------------------------------------------------------------------
+// Loading spinner for gate components
+// ---------------------------------------------------------------------------
+
+function GateLoading() {
+  return (
+    <div className="flex items-center justify-center p-4" role="status" aria-label="Loading">
+      <div className="w-5 h-5 border-2 border-[var(--color-border)] border-t-[var(--color-accent)] rounded-full animate-spin" />
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Gate components
 // ---------------------------------------------------------------------------
 
@@ -167,14 +183,14 @@ interface GateProps {
 
 export function RequireAuth({ children, fallback = null }: GateProps) {
   const { isSignedIn, isLoaded } = useAuth();
-  if (!isLoaded) return null;
+  if (!isLoaded) return <GateLoading />;
   return isSignedIn ? <>{children}</> : <>{fallback}</>;
 }
 
 export function RequirePro({ children, fallback = null }: GateProps) {
   const { isSignedIn, isLoaded } = useAuth();
   const { isPro, loading } = useSubscription();
-  if (!isLoaded || loading) return null;
+  if (!isLoaded || loading) return <GateLoading />;
   return isSignedIn && isPro ? <>{children}</> : <>{fallback}</>;
 }
 
@@ -185,6 +201,6 @@ interface RequireRoleProps extends GateProps {
 export function RequireRole({ role, children, fallback = null }: RequireRoleProps) {
   const { isSignedIn, isLoaded } = useAuth();
   const { hasRole, loading } = useAppRole();
-  if (!isLoaded || loading) return null;
+  if (!isLoaded || loading) return <GateLoading />;
   return isSignedIn && hasRole(role) ? <>{children}</> : <>{fallback}</>;
 }
