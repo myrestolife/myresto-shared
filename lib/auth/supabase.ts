@@ -42,7 +42,9 @@ export function getSupabase(factory?: () => SupabaseClient): SupabaseClient {
   return _supabase;
 }
 
-/** Reset the singleton — useful for tests. */
+/** Reset the singleton — test-only. No-op in production. */
 export function resetSupabase(): void {
-  _supabase = null;
+  if (process.env.NODE_ENV === "test" || process.env.NODE_ENV === "development") {
+    _supabase = null;
+  }
 }

@@ -1,6 +1,10 @@
 // API utilities
 export { ApiError, createApiFetch, createFileUpload } from "./lib/api";
-export type { FetchOptions } from "./lib/api";
+export type { FetchOptions, FetchHooks } from "./lib/api";
+
+// Logger
+export { createLogger, logger } from "./lib/logger";
+export type { LogLevel, LogEntry, LoggerOptions, Logger } from "./lib/logger";
 
 // Auth
 export {
@@ -38,7 +42,7 @@ export { createBrand } from "./lib/brand";
 export type { BrandConfig, Brand } from "./lib/brand";
 
 // Config
-export { getCurrentApp, isValidAppId, APP_DOMAINS } from "./lib/config";
+export { getCurrentApp, isValidAppId, APP_DOMAINS, APP_IDS } from "./lib/config";
 export type { AppId, AppInfo } from "./lib/config";
 
 // Theme
@@ -50,6 +54,22 @@ export {
   setStoredTheme,
   setTheme,
 } from "./lib/theme";
+
+// Validation
+export { validateEmail, validatePassword, validateRequired, validate } from "./lib/validation";
+export type { ValidationResult } from "./lib/validation";
+
+// Security headers
+export { withSecurityHeaders, getSecurityHeaders } from "./lib/security-headers";
+export type { SecurityHeadersConfig } from "./lib/security-headers";
+
+// Metrics
+export { createMetrics, noopMetrics } from "./lib/metrics";
+export type { MetricType, MetricEvent, MetricsOptions, Metrics } from "./lib/metrics";
+
+// Health checks
+export { checkHealth, createSupabaseCheck } from "./lib/health";
+export type { HealthCheckResult, HealthCheckFn } from "./lib/health";
 
 // Components
 export { default as Footer } from "./components/Footer";

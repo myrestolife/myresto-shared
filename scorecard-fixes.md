@@ -2,7 +2,7 @@
 
 **Repo:** @myresto/shared (myresto-shared-next)
 **Date:** 2026-03-24
-**Composite Score:** 4.6/10
+**Composite Score:** 6.6/10
 
 ## How to use this list
 
@@ -12,140 +12,97 @@ Work through items top to bottom. Each item is ordered by impact — fixing item
 
 ## Critical Priority
 
-- [ ] **[Testability]** No test files exist anywhere in the repository. Zero of 8 source modules have tests. — `repo-wide`
-  - **Fix:** Set up Vitest with @testing-library/react and jsdom, add a 'test' script to package.json, and write unit tests for all modules starting with pure functions in lib/brand.ts, lib/config.ts, and lib/api.ts.
-- [ ] **[Testability]** No test runner or test framework configured. No test-related dependencies or scripts. — `package.json`
-  - **Fix:** Add Vitest (or Jest) as a devDependency, create a vitest.config.ts with jsdom environment for React component testing, and add a 'test' script to package.json.
-- [ ] **[DevOps Readiness]** No CI/CD pipeline configuration exists (no GitHub Actions, GitLab CI, etc.). — `repo-wide`
-  - **Fix:** Add a .github/workflows/ci.yml that runs TypeScript type-checking (tsc --noEmit), linting, and tests on every push and pull request.
-- [ ] **[UI/UX]** No ARIA attributes used anywhere. UserButton dropdown invisible to screen readers. — `repo-wide`
-  - **Fix:** Add aria-expanded and aria-haspopup on UserButton toggle, role='menu' on dropdown, role='menuitem' on items. Add aria-live='polite' on error messages.
+No critical findings detected.
 
 ## High Priority
 
-- [ ] **[Testability]** No CI/CD pipeline to enforce type-checking and tests. — `repo-wide`
-  - **Fix:** Add a .github/workflows/ci.yml that runs tsc --noEmit, eslint, and tests on every push and pull request, blocking merges on failure.
-- [ ] **[Testability]** Supabase singleton (`_supabase`) is module-level mutable variable, hard to mock. — `lib/auth.tsx:18`
-  - **Fix:** Accept a SupabaseClient instance via dependency injection (e.g., as a prop to AuthProvider or via a factory function) to allow test doubles.
-- [ ] **[Testability]** `getCurrentApp()` reads globals directly, hard to test without global mocking. — `lib/config.ts:26`
-  - **Fix:** Refactor getCurrentApp to accept optional parameters (envAppId, hostname) with defaults from process.env/window, enabling pure-function testing.
-- [ ] **[DevOps Readiness]** No npm scripts defined — no build, test, lint, or typecheck commands. — `package.json`
-  - **Fix:** Add scripts for 'typecheck' (tsc --noEmit), 'lint' (eslint), and 'test' (vitest) to package.json.
-- [ ] **[DevOps Readiness]** Test directory empty (only .gitkeep). No test framework installed. — `test/.gitkeep`
-  - **Fix:** Install Vitest and add unit tests for core modules like auth, authorization, config, api, and brand.
-- [ ] **[DevOps Readiness]** No linter or formatter configured (no ESLint, Prettier). — `repo-wide`
-  - **Fix:** Add ESLint with TypeScript and React plugins, and Prettier, with corresponding npm scripts.
-- [ ] **[Observability]** No structured logging library. Only 3 bare console.error calls. — `repo-wide`
-  - **Fix:** Adopt a structured logging utility (e.g., pino) and export a shared logger with timestamp, level, message, and correlationId fields.
-- [ ] **[Observability]** Error tracking minimal — only optional Sentry in ErrorBoundary via dynamic require. — `components/ErrorBoundary.tsx:27`
-  - **Fix:** Provide a shared error reporting utility that consuming apps can configure with their Sentry DSN. Instrument API fetch utilities to optionally report errors.
-- [ ] **[Observability]** No trace context propagation (X-Request-Id, traceparent) in API utilities. — `lib/api.ts:28`
-  - **Fix:** Generate or accept a correlation/request ID in createApiFetch and attach it as an X-Request-Id header on every outgoing request.
-- [ ] **[UI/UX]** All form inputs use placeholder-only labeling. No `<label>` or `aria-label`. — `lib/auth.tsx:323`
-  - **Fix:** Add visible `<label>` elements associated via htmlFor/id, or at minimum add aria-label attributes to every input field.
-- [ ] **[UI/UX]** UserButton dropdown has no keyboard navigation (Escape, arrow keys, focus trap). — `lib/auth.tsx:500-576`
-  - **Fix:** Add onKeyDown handler to close on Escape, implement focus trapping, add arrow key navigation, and close on click outside.
-- [ ] **[UI/UX]** Mixed styling approaches: inline CSSProperties in auth.tsx vs Tailwind in Footer/ErrorBoundary. — `repo-wide`
-  - **Fix:** Standardize on Tailwind CSS for all components. Refactor SignIn, SignUp, and UserButton to use Tailwind classes.
-- [ ] **[UI/UX]** Style objects duplicated verbatim between SignIn and SignUp components. — `lib/auth.tsx:280-309`
-  - **Fix:** Extract shared styles into reusable constants or create shared styled input/button components.
-- [ ] **[UI/UX]** Gate components (RequireAuth, RequirePro, RequireRole) return null during loading. — `lib/authorization.tsx:168-189`
-  - **Fix:** Render a loading skeleton or spinner instead of null. At minimum, preserve layout space to prevent content shifts.
-- [ ] **[Maintainability]** No linter or formatter configured. — `repo-wide`
-  - **Fix:** Add ESLint (with typescript-eslint) and Prettier with config files and add lint/format scripts to package.json.
-- [ ] **[Maintainability]** No CI pipeline — code quality never enforced automatically. — `repo-wide`
-  - **Fix:** Add a GitHub Actions workflow that runs tsc --noEmit, eslint, and tests on push/PR.
-- [ ] **[Maintainability]** No tests exist. — `test/.gitkeep`
-  - **Fix:** Add Vitest or Jest with React Testing Library and write unit tests for core utilities and hooks.
-- [ ] **[Maintainability]** auth.tsx is 578-line monolith mixing provider, hooks, and UI components. — `lib/auth.tsx`
-  - **Fix:** Split into auth/provider.tsx, auth/SignIn.tsx, auth/SignUp.tsx, auth/UserButton.tsx, and re-export from auth/index.tsx.
-- [ ] **[Maintainability]** Inconsistent styling approach across components. — `repo-wide`
-  - **Fix:** Standardize on Tailwind CSS for all components.
-- [ ] **[Security]** .gitignore only excludes node_modules — no .env or secrets patterns. — `.gitignore`
-  - **Fix:** Add .env*, .env.local, .env.*.local, *.pem, and other secret-bearing file patterns to .gitignore.
-- [ ] **[Security]** No dependency vulnerability scanning (Dependabot/Renovate) configured. — `repo-wide`
-  - **Fix:** Add a .github/dependabot.yml or renovate.json configuration.
-- [ ] **[Security]** No input validation library or patterns used. — `lib/api.ts`
-  - **Fix:** Integrate Zod for schema validation at API boundaries and form submissions.
-- [ ] **[Reuse]** Inline styles copy-pasted identically between SignIn and SignUp (~30 lines each). — `lib/auth.tsx:280-309, 415-444`
-  - **Fix:** Extract shared form styles into a module-level AUTH_FORM_STYLES constant.
-- [ ] **[Reuse]** createApiFetch and createFileUpload duplicate auth header, error handling, and response parsing. — `lib/api.ts:27-86`
-  - **Fix:** Extract a shared internal helper (handleResponse or baseFetch) for common logic.
-- [ ] **[Simplicity]** auth.tsx mixes 4+ distinct responsibilities in 577 lines. — `lib/auth.tsx`
-  - **Fix:** Split into focused files: auth-context.tsx, SignIn.tsx, SignUp.tsx, UserButton.tsx, supabase.ts.
-- [ ] **[Simplicity]** SignIn component is 143 lines with two render branches and inline styles. — `lib/auth.tsx:235`
-  - **Fix:** Extract ForgotPasswordForm and SignInForm sub-components with shared styles.
+- [ ] **[Observability]** No structured logging library. Only dev-gated console.error calls; zero production logging. — `repo-wide`
+  - **Fix:** Adopt a structured logging library (e.g., pino) and export a shared logger utility that emits JSON with timestamp, level, message, and correlationId fields. Consuming apps should be able to configure the logger instance.
+- [ ] **[Observability]** Error tracking limited to React ErrorBoundary with optional Sentry. API errors, auth failures, and role/subscription fetch errors have no tracking integration. — `lib/api.ts:62`
+  - **Fix:** Provide pluggable error reporting hooks (onError callbacks) in createApiFetch and auth operations. Export a captureException utility that delegates to Sentry/Datadog if available.
+- [ ] **[Observability]** No metrics or instrumentation utilities provided for consuming apps. — `repo-wide`
+  - **Fix:** Export optional callback hooks (e.g., onRequest, onError, onResponse) in createApiFetch so consuming apps can plug in their metrics collection. Consider OpenTelemetry-compatible instrumentation.
+- [ ] **[Testability]** Only 4 of ~12 testable source modules have tests (~33% coverage). Entire React component/hook layer is untested. — `repo-wide`
+  - **Fix:** Add component and hook tests using @testing-library/react (already installed) for AuthProvider, ThemeProvider, SignIn, SignUp, UserButton, Footer, ErrorBoundary, and authorization hooks. Target 70%+ file coverage.
+- [ ] **[Testability]** No test coverage measurement or thresholds configured. — `vitest.config.ts`
+  - **Fix:** Add @vitest/coverage-v8, configure coverage in vitest.config.ts (e.g., thresholds: { lines: 60 }), and add a coverage report step to CI.
+- [ ] **[DevOps Readiness]** CI workflow references `.node-version` file that does not exist, causing pipeline failure. — `.github/workflows/ci.yml:17`
+  - **Fix:** Create a `.node-version` file at the repo root (e.g., containing `22`) or switch to a hardcoded `node-version: 22` in the workflow.
+- [ ] **[DevOps Readiness]** `.env.example` is excluded from version control by the `.env.*` gitignore pattern. — `.gitignore:5`
+  - **Fix:** Add a negation rule `!.env.example` to `.gitignore` so the template file is tracked, or rename it to `env.example`.
+- [ ] **[DevOps Readiness]** No release or publish workflow — no automated versioning or distribution process. — `repo-wide`
+  - **Fix:** Add a GitHub Actions release workflow or npm publish script, and document the release process in the README.
+- [ ] **[Maintainability]** CI references missing `.node-version` file (same root cause as DevOps finding). — `.github/workflows/ci.yml:18`
+  - **Fix:** Create `.node-version` or hardcode `node-version: 22` in the workflow.
+- [ ] **[Security]** No input validation library (Zod, Joi). Only basic client-side password checks in SignUp. — `lib/auth/SignUp.tsx:34-41`
+  - **Fix:** Add Zod as a peer/optional dependency and provide shared validation schemas for auth forms and API request payloads.
+- [ ] **[Security]** No shared security headers or CORS middleware utilities for consuming apps. — `repo-wide`
+  - **Fix:** Provide a shared Next.js middleware helper (e.g., lib/security-headers.ts) that sets CSP, HSTS, X-Frame-Options, X-Content-Type-Options, and Referrer-Policy.
 
 ## Medium Priority
 
-- [ ] **[Security]** Supabase singleton could leak sessions in SSR contexts. — `lib/auth.tsx:18-48`
-  - **Fix:** Document client-only usage clearly and consider adding runtime guard or separate server factory.
-- [ ] **[Security]** Console.error in authorization hooks may expose internals in production. — `lib/authorization.tsx:65`
-  - **Fix:** Gate console.error behind process.env.NODE_ENV === 'development' check.
-- [ ] **[Security]** No security headers or CORS utilities provided. — `repo-wide`
-  - **Fix:** Provide shared Next.js middleware helpers for CSP, HSTS, X-Frame-Options.
-- [ ] **[Security]** Weak password validation (6 chars min only via HTML attribute). — `lib/auth.tsx:470`
-  - **Fix:** Add client-side password strength validation with complexity requirements.
-- [ ] **[Performance]** Barrel `export *` can hinder tree-shaking. — `index.ts:1-6`
-  - **Fix:** Use named re-exports or document subpath imports for consumers.
-- [ ] **[Performance]** ErrorBoundary uses `require()` in ESM module. — `components/ErrorBoundary.tsx:28`
-  - **Fix:** Replace with dynamic `import('@sentry/nextjs')`.
-- [ ] **[Performance]** Inline style objects recreated every render in SignIn/SignUp. — `lib/auth.tsx:280-309`
-  - **Fix:** Hoist static style objects to module scope.
-- [ ] **[Observability]** No metrics or instrumentation hooks provided. — `repo-wide`
-  - **Fix:** Add optional callback hooks or event emitter to createApiFetch for metrics.
-- [ ] **[Observability]** Undifferentiated log levels (all console.error). — `lib/authorization.tsx:65`
-  - **Fix:** Use console.warn for recoverable conditions, reserve error for unrecoverable failures.
-- [ ] **[Observability]** API errors are plain Error with no structured metadata. — `lib/api.ts:46`
-  - **Fix:** Create custom ApiError class with status, url, and response body fields.
-- [ ] **[UI/UX]** No responsive breakpoints beyond basic centering. — `lib/auth.tsx:280`
-  - **Fix:** Use Tailwind responsive utilities (sm:, md:, lg:) for forms and components.
-- [ ] **[UI/UX]** Minimal form validation UX — only on submit. — `lib/auth.tsx:349-350`
-  - **Fix:** Add real-time validation with inline feedback and visual input states.
-- [ ] **[UI/UX]** No internationalization support — all strings hardcoded in English. — `repo-wide`
-  - **Fix:** Extract user-facing strings into a translation system or accept as props.
-- [ ] **[UI/UX]** UserButton dropdown doesn't close on outside click. — `lib/auth.tsx:504`
-  - **Fix:** Add click-outside handler with useEffect document event listener.
-- [ ] **[Maintainability]** theme.tsx naming conflict (setTheme). — `lib/theme.tsx:117-123`
-  - **Fix:** Rename standalone export to setStoredTheme or setThemeDirectly.
-- [ ] **[Maintainability]** ErrorBoundary uses require() in ESM module. — `components/ErrorBoundary.tsx:28`
-  - **Fix:** Use dynamic import() instead.
-- [ ] **[Maintainability]** Most public APIs lack JSDoc documentation. — `repo-wide`
-  - **Fix:** Add JSDoc to all exported functions, hooks, and components.
-- [ ] **[Maintainability]** Duplicated style objects in SignIn/SignUp. — `lib/auth.tsx:280-444`
-  - **Fix:** Extract shared style constants into common module.
-- [ ] **[Reuse]** Theme resolution logic repeated 4x, DOM write 7x. — `lib/theme.tsx:39-114`
-  - **Fix:** Extract resolveTheme() and applyTheme() helpers.
-- [ ] **[Reuse]** useAppRole/useSubscription share identical fetch pattern. — `lib/authorization.tsx:35-150`
-  - **Fix:** Extract generic useAuthenticatedQuery hook.
-- [ ] **[Reuse]** Error extraction pattern repeated 3x in form handlers. — `lib/auth.tsx:251, 274, 409`
-  - **Fix:** Extract getErrorMessage(err, fallback) utility.
-- [ ] **[Simplicity]** SignUp is 97 lines with duplicated styles. — `lib/auth.tsx:384`
-  - **Fix:** Extract shared style constants to eliminate duplication.
-- [ ] **[Simplicity]** UserButton is 90 lines with extensive inline styles. — `lib/auth.tsx:487`
-  - **Fix:** Extract into own component file with CSS classes.
-- [ ] **[Simplicity]** SSR stub in getSupabase() is fragile hand-crafted mock. — `lib/auth.tsx:29-40`
-  - **Fix:** Return null during SSR and handle null case in consumers.
-- [ ] **[Testability]** Pure functions with no tests (low-hanging fruit). — `repo-wide`
-  - **Fix:** Write unit tests for createBrand, createApiFetch, getCurrentApp, isValidAppId, toClerkUser.
-- [ ] **[Testability]** theme.tsx uses localStorage/DOM directly. — `lib/theme.tsx`
-  - **Fix:** Ensure jsdom test environment is configured or abstract behind injectable interfaces.
-- [ ] **[DevOps Readiness]** No .env.example template. — `repo-wide`
-  - **Fix:** Create .env.example listing NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, NEXT_PUBLIC_APP_ID.
-- [ ] **[DevOps Readiness]** No publishing/release documentation. — `README.md`
-  - **Fix:** Add a 'Publishing' section documenting versioning and release process.
+- [ ] **[Observability]** X-Request-Id is generated on API requests but not included in ApiError instances, breaking end-to-end correlation. — `lib/api.ts:64`
+  - **Fix:** Add a `requestId` field to the ApiError class and populate it from the X-Request-Id header value.
+- [ ] **[Observability]** All console.error calls gated behind `NODE_ENV === 'development'`, silencing production errors in authorization hooks. — `lib/authorization.tsx:65`
+  - **Fix:** Remove the development-only guard or replace with a structured logger. Errors should always be reported in production.
+- [ ] **[Observability]** ErrorBoundary Sentry integration uses hardcoded module name with no way for consuming apps to configure or replace the error reporting provider. — `components/ErrorBoundary.tsx:27`
+  - **Fix:** Accept an optional `onError` callback prop in ErrorBoundary so consuming apps can plug in their own error reporting.
+- [ ] **[Testability]** No integration tests exist. All 4 test files are pure unit tests with no provider-to-consumer data flow tests. — `repo-wide`
+  - **Fix:** Add integration tests that render AuthProvider wrapping authorization hooks and gate components, verifying the full data flow.
+- [ ] **[Testability]** Heavy reliance on mock introspection (mockFetch.mock.calls) in api.test.ts couples tests to fetch implementation details. — `test/api.test.ts:40`
+  - **Fix:** Consider using MSW (Mock Service Worker) for more realistic request interception and behavior-based assertions.
+- [ ] **[Testability]** No branch protection rules requiring CI to pass before merging. — `.github/workflows/ci.yml`
+  - **Fix:** Enable GitHub branch protection rules on the master branch to require the 'check' status to pass.
+- [ ] **[DevOps Readiness]** No release documentation in README. — `README.md`
+  - **Fix:** Add a 'Contributing / Releasing' section explaining how to version bump and publish changes.
+- [ ] **[DevOps Readiness]** CI only triggers on master branch pushes and PRs. — `.github/workflows/ci.yml:5`
+  - **Fix:** Consider adding CI triggers for all branches or documenting the branching strategy.
+- [ ] **[Maintainability]** Prettier installed but not enforced in CI — inconsistent formatting can slip through PRs. — `package.json`
+  - **Fix:** Add a `"format:check": "prettier --check ."` script and include it as a CI step.
+- [ ] **[Maintainability]** No `.editorconfig` at the repository root. — `repo-wide`
+  - **Fix:** Add an `.editorconfig` file specifying indent style, size, charset, and end-of-line settings.
+- [ ] **[Maintainability]** Several exported hooks and gate components lack JSDoc comments. — `lib/auth/provider.tsx:87-99`
+  - **Fix:** Add brief JSDoc descriptions to all public exports (useAuth, useUser, useSupabase, useTheme, RequireAuth, RequirePro, RequireRole).
+- [ ] **[Security]** Authorization gate components are client-side only — no server-side enforcement. — `lib/authorization.tsx:184-206`
+  - **Fix:** Document clearly that gates are UI-level only. Consider providing server-side middleware or route-handler wrappers.
+- [ ] **[Security]** No security-focused ESLint plugin configured. — `eslint.config.js`
+  - **Fix:** Add eslint-plugin-security to catch common security anti-patterns at lint time.
+- [ ] **[Security]** No npm audit step in CI pipeline. — `.github/workflows/ci.yml`
+  - **Fix:** Add `npm audit --audit-level=high` step to fail builds on high-severity vulnerabilities.
+- [ ] **[Performance]** useSubscription uses `.select('*')` but only needs plan and status fields. — `lib/authorization.tsx:133`
+  - **Fix:** Change to `.select('plan, status')` to reduce payload size.
+- [ ] **[Performance]** No caching or deduplication for Supabase queries in useAppRole and useSubscription. — `lib/authorization.tsx:55-74`
+  - **Fix:** Add in-memory cache with TTL or use React context to share fetched data across components.
+- [ ] **[Performance]** Barrel index.ts re-exports all modules which may hinder tree-shaking. — `index.ts`
+  - **Fix:** Document that consumers should use deep imports (e.g., `@myresto/shared/lib/api`) for optimal tree-shaking.
+- [ ] **[Simplicity]** useAppRole and useSubscription share ~30 lines of duplicated async-fetch pattern. — `lib/authorization.tsx:35-77`
+  - **Fix:** Extract a shared useAsyncQuery hook that encapsulates the cancelled-flag, loading state, and error-handling boilerplate.
+- [ ] **[Simplicity]** SSR no-op stub manually replicates SupabaseClient interface with `as unknown as SupabaseClient`. — `lib/auth/supabase.ts:23-34`
+  - **Fix:** Use a Proxy-based stub to reduce maintenance burden as the Supabase SDK evolves.
+- [ ] **[Reuse]** Duplicated async-fetch pattern between useAppRole and useSubscription. — `lib/authorization.tsx:26-161`
+  - **Fix:** Extract a generic useAuthenticatedQuery hook.
+- [ ] **[Reuse]** Redirect URL construction duplicated in 3 auth files. — `lib/auth/SignIn.tsx:117, SignUp.tsx:50, provider.tsx:140`
+  - **Fix:** Extract a `getRedirectUrl(path)` helper in lib/auth/helpers.ts.
+- [ ] **[Reuse]** AppId values listed twice — type union and runtime array. — `lib/config.ts:1,45`
+  - **Fix:** Define `const APP_IDS = [...] as const` and derive `AppId` as `typeof APP_IDS[number]`.
 
 ## Suggestions
 
-- [ ] **[Performance]** useAppRole/useSubscription fetch on every mount without caching. — `lib/authorization.tsx:26-83`
-  - **Fix:** Consider SWR/React Query or lifting fetched data into AuthProvider context.
-- [ ] **[Performance]** `new Date().getFullYear()` called every Footer render. — `components/Footer.tsx:51`
-  - **Fix:** Extract to module-level constant.
-- [ ] **[UI/UX]** Error messages use hardcoded red color (#ef4444) without theme support. — `lib/auth.tsx:324`
-  - **Fix:** Use var(--color-error) for theme-consistent error styling.
-- [ ] **[UI/UX]** Disabled button has no visual styling change. — `lib/auth.tsx:325`
-  - **Fix:** Add opacity reduction or muted background when disabled.
-- [ ] **[Reuse]** Legacy theme compat exports duplicate provider logic. — `lib/theme.tsx:100-123`
-  - **Fix:** Audit consuming apps; deprecate and remove if unused.
-- [ ] **[Simplicity]** Inline styles throughout auth.tsx inconsistent with Tailwind elsewhere. — `lib/auth.tsx`
-  - **Fix:** Adopt consistent styling approach (Tailwind CSS).
+- [ ] **[Performance]** ThemeProvider context value object not memoized — new object created on every render. — `lib/theme.tsx:92`
+  - **Fix:** Wrap the ThemeContext.Provider value in useMemo with [theme, setTheme, toggleTheme] as dependencies.
+- [ ] **[Security]** resetSupabase() is available to all consumers, not just tests. — `lib/auth/supabase.ts:46-48`
+  - **Fix:** Guard behind NODE_ENV === 'test' check, or remove from the main barrel export.
+- [ ] **[Testability]** No shared setup file despite @testing-library/jest-dom installed. — `vitest.config.ts`
+  - **Fix:** Create test/setup.ts importing '@testing-library/jest-dom/vitest' and reference it in vitest.config.ts via setupFiles.
+- [ ] **[Testability]** Only one test file uses factory functions for test data. — `repo-wide`
+  - **Fix:** Extract shared test factories for common domain objects into test/factories.ts.
+- [ ] **[Maintainability]** scorecard-fixes.md is a temporary audit artifact committed to the repo. — `scorecard-fixes.md`
+  - **Fix:** Move to project wiki or issue tracker, or add to .gitignore.
+- [ ] **[DevOps Readiness]** No devcontainer configuration for consistent development environments. — `repo-wide`
+  - **Fix:** Consider adding a .devcontainer configuration for the team.
+- [ ] **[Reuse]** Form state boilerplate (error, loading, setError, setLoading, try/catch) repeated in SignIn and SignUp. — `lib/auth/SignIn.tsx, SignUp.tsx`
+  - **Fix:** Consider a useFormSubmit(asyncFn) hook returning { submit, loading, error }.
+- [ ] **[Reuse]** Additional Tailwind layout patterns could be added to styles.ts. — `lib/auth/styles.ts`
+  - **Fix:** Add constants for repeated patterns like AUTH_DIVIDER and AUTH_FOOTER_LINK_ROW.
+- [ ] **[Observability]** No health check or dependency verification utilities exported. — `repo-wide`
+  - **Fix:** Export a checkSupabaseConnection() utility that consuming apps can call from their /health endpoints.

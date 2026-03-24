@@ -5,6 +5,8 @@ import { Component, ErrorInfo, ReactNode } from 'react';
 interface Props {
   children: ReactNode;
   fallback?: ReactNode;
+  /** Optional custom error handler — called in addition to Sentry. */
+  onError?: (error: Error, errorInfo: ErrorInfo) => void;
 }
 
 interface State {
@@ -23,6 +25,9 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    // Notify consuming app via callback
+    this.props.onError?.(error, errorInfo);
+
     // Try to log to Sentry if available (dynamic import for ESM compat)
     const sentryModule = '@sentry/nextjs';
     import(/* webpackIgnore: true */ sentryModule)

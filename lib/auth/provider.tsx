@@ -11,7 +11,7 @@ import React, {
 } from "react";
 import type { Session, SupabaseClient } from "@supabase/supabase-js";
 import { getSupabase } from "./supabase";
-import { toClerkUser } from "./helpers";
+import { toClerkUser, getRedirectUrl } from "./helpers";
 import type { AuthContextValue } from "./types";
 
 // ---------------------------------------------------------------------------
@@ -84,16 +84,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 // Hooks
 // ---------------------------------------------------------------------------
 
+/** Hook for authentication state — returns isLoaded, isSignedIn, userId, getToken, signOut. */
 export function useAuth() {
   const { isLoaded, isSignedIn, getToken, userId, signOut } = useContext(AuthContext);
   return { isLoaded, isSignedIn, getToken, userId, signOut };
 }
 
+/** Hook for user profile data — returns user (ClerkCompatibleUser), isSignedIn, isLoaded. */
 export function useUser() {
   const { user, isSignedIn, isLoaded } = useContext(AuthContext);
   return { user, isSignedIn, isLoaded };
 }
 
+/** Hook for direct Supabase client access. */
 export function useSupabase(): SupabaseClient {
   return getSupabase();
 }
@@ -137,7 +140,7 @@ export function SignOutButton({ children }: { children?: ReactNode }) {
 
 export async function forgotPassword(email: string) {
   const { error } = await getSupabase().auth.resetPasswordForEmail(email, {
-    redirectTo: typeof window !== "undefined" ? `${window.location.origin}/reset-password` : undefined,
+    redirectTo: getRedirectUrl("/reset-password"),
   });
   if (error) throw error;
 }

@@ -2,7 +2,7 @@
 
 import React, { useState, useId } from "react";
 import { getSupabase } from "./supabase";
-import { getErrorMessage } from "./helpers";
+import { getErrorMessage, getRedirectUrl } from "./helpers";
 import {
   AUTH_BOX,
   AUTH_HEADING,
@@ -47,7 +47,7 @@ export function SignUp() {
         password,
         options: {
           data: { first_name: firstName, last_name: lastName },
-          emailRedirectTo: typeof window !== "undefined" ? `${window.location.origin}/auth/callback` : undefined,
+          emailRedirectTo: getRedirectUrl("/auth/callback"),
         },
       });
       if (err) throw err;

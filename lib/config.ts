@@ -1,4 +1,7 @@
-export type AppId = "event" | "garage" | "club" | "hub" | "gear" | "parts" | "life" | "show";
+/** Single source of truth for valid app IDs. */
+export const APP_IDS = ["event", "garage", "club", "hub", "gear", "parts", "life", "show"] as const;
+
+export type AppId = (typeof APP_IDS)[number];
 
 export interface AppInfo { app: AppId; name: string; }
 
@@ -42,5 +45,5 @@ export function getCurrentApp(
 }
 
 export function isValidAppId(v: string): v is AppId {
-  return ["event", "garage", "club", "hub", "gear", "parts", "life", "show"].includes(v);
+  return (APP_IDS as readonly string[]).includes(v);
 }

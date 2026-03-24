@@ -5,7 +5,10 @@
  * ```ts
  * import { createApiFetch } from '@myresto/shared/lib/api';
  *
- * const apiFetch = createApiFetch('/api');
+ * const apiFetch = createApiFetch('/api', {
+ *   onRequest: ({ url, method, requestId }) => console.log('→', method, url),
+ *   onError: (err) => Sentry.captureException(err),
+ * });
  *
  * export const api = {
  *   getEvents: () => apiFetch<{ events: Event[] }>('/events'),
@@ -22,12 +25,14 @@ export class ApiError extends Error {
   readonly status: number;
   readonly url: string;
   readonly body: unknown;
+  readonly requestId: string;
 
-  constructor(message: string, status: number, url: string, body?: unknown) {
+  constructor(message: string, status: number, url: string, requestId: string, body?: unknown) {
     super(message);
     this.name = "ApiError";
     this.status = status;
     this.url = url;
+    this.requestId = requestId;
     this.body = body;
   }
 }
@@ -45,6 +50,16 @@ export interface FetchOptions {
   requestId?: string;
 }
 
+/** Instrumentation hooks for observability. */
+export interface FetchHooks {
+  /** Called before each request is sent. */
+  onRequest?: (ctx: { url: string; method: string; requestId: string }) => void;
+  /** Called after a successful response. */
+  onResponse?: (ctx: { url: string; method: string; requestId: string; status: number; durationMs: number }) => void;
+  /** Called when a request fails (network error or non-ok response). */
+  onError?: (error: ApiError) => void;
+}
+
 // ---------------------------------------------------------------------------
 // Internals
 // ---------------------------------------------------------------------------
@@ -53,18 +68,18 @@ function generateRequestId(): string {
   if (typeof crypto !== "undefined" && crypto.randomUUID) {
     return crypto.randomUUID();
   }
-  // Fallback for older environments
   return `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
 }
 
 /** Shared response handler for both fetch variants. */
-async function handleResponse<T>(res: Response, url: string): Promise<T> {
+async function handleResponse<T>(res: Response, url: string, requestId: string): Promise<T> {
   if (!res.ok) {
     const body = await res.json().catch(() => ({ error: res.statusText }));
     throw new ApiError(
       (body as Record<string, string>).error || `API error ${res.status}`,
       res.status,
       url,
+      requestId,
       body
     );
   }
@@ -76,13 +91,14 @@ function buildHeaders(
   base: Record<string, string>,
   token?: string | null,
   requestId?: string
-): Record<string, string> {
+): { headers: Record<string, string>; requestId: string } {
   const headers = { ...base };
   if (token) {
     headers["Authorization"] = `Bearer ${token}`;
   }
-  headers["X-Request-Id"] = requestId || generateRequestId();
-  return headers;
+  const id = requestId || generateRequestId();
+  headers["X-Request-Id"] = id;
+  return { headers, requestId: id };
 }
 
 // ---------------------------------------------------------------------------
@@ -90,31 +106,44 @@ function buildHeaders(
 // ---------------------------------------------------------------------------
 
 /**
- * Create a typed API fetch function with a base URL.
+ * Create a typed API fetch function with a base URL and optional instrumentation hooks.
  */
-export function createApiFetch(baseUrl: string = "/api") {
+export function createApiFetch(baseUrl: string = "/api", hooks?: FetchHooks) {
   return async function apiFetch<T>(path: string, opts: FetchOptions = {}): Promise<T> {
     const url = `${baseUrl}${path}`;
-    const headers = buildHeaders(
+    const method = opts.method || "GET";
+    const { headers, requestId } = buildHeaders(
       { "Content-Type": "application/json", ...opts.headers },
       opts.token,
       opts.requestId
     );
 
-    const res = await fetch(url, {
-      method: opts.method || "GET",
-      headers,
-      body: opts.body ? JSON.stringify(opts.body) : undefined,
-    });
+    hooks?.onRequest?.({ url, method, requestId });
+    const start = Date.now();
 
-    return handleResponse<T>(res, url);
+    try {
+      const res = await fetch(url, {
+        method,
+        headers,
+        body: opts.body ? JSON.stringify(opts.body) : undefined,
+      });
+
+      const result = await handleResponse<T>(res, url, requestId);
+      hooks?.onResponse?.({ url, method, requestId, status: res.status, durationMs: Date.now() - start });
+      return result;
+    } catch (err) {
+      if (err instanceof ApiError) {
+        hooks?.onError?.(err);
+      }
+      throw err;
+    }
   };
 }
 
 /**
  * Create a file upload function for binary uploads (images, etc.)
  */
-export function createFileUpload(baseUrl: string = "/api") {
+export function createFileUpload(baseUrl: string = "/api", hooks?: FetchHooks) {
   return async function uploadFile<T = { url: string }>(
     path: string,
     file: File,
@@ -122,17 +151,29 @@ export function createFileUpload(baseUrl: string = "/api") {
     additionalHeaders?: Record<string, string>
   ): Promise<T> {
     const url = `${baseUrl}${path}`;
-    const headers = buildHeaders(
+    const { headers, requestId } = buildHeaders(
       { "Content-Type": file.type, "X-Content-Type": file.type, ...additionalHeaders },
       token
     );
 
-    const res = await fetch(url, {
-      method: "POST",
-      headers,
-      body: file,
-    });
+    hooks?.onRequest?.({ url, method: "POST", requestId });
+    const start = Date.now();
 
-    return handleResponse<T>(res, url);
+    try {
+      const res = await fetch(url, {
+        method: "POST",
+        headers,
+        body: file,
+      });
+
+      const result = await handleResponse<T>(res, url, requestId);
+      hooks?.onResponse?.({ url, method: "POST", requestId, status: res.status, durationMs: Date.now() - start });
+      return result;
+    } catch (err) {
+      if (err instanceof ApiError) {
+        hooks?.onError?.(err);
+      }
+      throw err;
+    }
   };
 }

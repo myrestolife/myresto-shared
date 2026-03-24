@@ -4,7 +4,6 @@ on:
   push:
     branches: [master]
   pull_request:
-    branches: [master]
 
 jobs:
   check:
@@ -25,5 +24,11 @@ jobs:
       - name: Lint
         run: npm run lint
 
-      - name: Tests
-        run: npm run test
+      - name: Format check
+        run: npm run format:check
+
+      - name: Tests with coverage
+        run: npm run test:coverage
+
+      - name: Security audit
+        run: npm audit --audit-level=high

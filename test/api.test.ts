@@ -14,10 +14,11 @@ function jsonResponse(data: unknown, status = 200) {
 
 describe("ApiError", () => {
   it("carries status, url, and body", () => {
-    const err = new ApiError("Not found", 404, "/api/test", { error: "Not found" });
+    const err = new ApiError("Not found", 404, "/api/test", "req-1", { error: "Not found" });
     expect(err.message).toBe("Not found");
     expect(err.status).toBe(404);
     expect(err.url).toBe("/api/test");
+    expect(err.requestId).toBe("req-1");
     expect(err.body).toEqual({ error: "Not found" });
     expect(err.name).toBe("ApiError");
     expect(err).toBeInstanceOf(Error);

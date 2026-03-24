@@ -3,7 +3,7 @@
 import React, { useState, useId } from "react";
 import { getSupabase } from "./supabase";
 import { forgotPassword } from "./provider";
-import { getErrorMessage } from "./helpers";
+import { getErrorMessage, getRedirectUrl } from "./helpers";
 import {
   AUTH_BOX,
   AUTH_HEADING,
@@ -114,7 +114,7 @@ export function SignIn() {
     setError(null);
     const { error: err } = await getSupabase().auth.signInWithOAuth({
       provider: "google",
-      options: { redirectTo: typeof window !== "undefined" ? `${window.location.origin}/auth/callback` : undefined },
+      options: { redirectTo: getRedirectUrl("/auth/callback") },
     });
     if (err) setError(err.message);
   };

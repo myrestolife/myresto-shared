@@ -3,6 +3,7 @@ import tsPlugin from "@typescript-eslint/eslint-plugin";
 import tsParser from "@typescript-eslint/parser";
 import reactPlugin from "eslint-plugin-react";
 import reactHooksPlugin from "eslint-plugin-react-hooks";
+import securityPlugin from "eslint-plugin-security";
 
 export default [
   js.configs.recommended,
@@ -12,6 +13,7 @@ export default [
       "@typescript-eslint": tsPlugin,
       react: reactPlugin,
       "react-hooks": reactHooksPlugin,
+      security: securityPlugin,
     },
     languageOptions: {
       parser: tsParser,
@@ -36,6 +38,10 @@ export default [
         MediaQueryListEvent: "readonly",
         MouseEvent: "readonly",
         Node: "readonly",
+        setTimeout: "readonly",
+        Promise: "readonly",
+        Date: "readonly",
+        Error: "readonly",
       },
     },
     rules: {
@@ -48,6 +54,12 @@ export default [
       "react/react-in-jsx-scope": "off",
       "react-hooks/rules-of-hooks": "error",
       "react-hooks/exhaustive-deps": "warn",
+
+      // Security
+      "security/detect-object-injection": "off",
+      "security/detect-non-literal-regexp": "warn",
+      "security/detect-unsafe-regex": "warn",
+      "security/detect-eval-with-expression": "error",
     },
     settings: {
       react: { version: "detect" },

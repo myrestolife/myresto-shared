@@ -29,3 +29,9 @@ export function getErrorMessage(err: unknown, fallback: string): string {
   if (typeof err === "string") return err;
   return fallback;
 }
+
+/** Build an origin-relative redirect URL (SSR-safe). */
+export function getRedirectUrl(path: string): string | undefined {
+  if (typeof window === "undefined") return undefined;
+  return `${window.location.origin}${path}`;
+}
