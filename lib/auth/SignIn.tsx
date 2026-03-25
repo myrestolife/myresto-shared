@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState, useId } from "react";
+import React, { useState, useId, useEffect } from "react";
 import { getSupabase } from "./supabase";
-import { forgotPassword } from "./provider";
+import { forgotPassword, useAuth } from "./provider";
 import { getErrorMessage, getRedirectUrl } from "./helpers";
 import {
   AUTH_BOX,
@@ -87,7 +87,13 @@ function ForgotPasswordForm({
 // SignIn
 // ---------------------------------------------------------------------------
 
-export function SignIn() {
+export function SignIn({
+  afterSignInUrl = "/dashboard",
+}: {
+  routing?: string;
+  path?: string;
+  afterSignInUrl?: string;
+} = {}) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -95,6 +101,14 @@ export function SignIn() {
   const [forgotMode, setForgotMode] = useState(false);
   const emailId = useId();
   const passwordId = useId();
+  const { isSignedIn, isLoaded } = useAuth();
+
+  // Redirect after successful sign-in
+  useEffect(() => {
+    if (isLoaded && isSignedIn) {
+      window.location.href = afterSignInUrl;
+    }
+  }, [isLoaded, isSignedIn, afterSignInUrl]);
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -103,6 +117,7 @@ export function SignIn() {
     try {
       const { error: err } = await getSupabase().auth.signInWithPassword({ email, password });
       if (err) throw err;
+      // Redirect will happen via useEffect when isSignedIn updates
     } catch (err: unknown) {
       setError(getErrorMessage(err, "Sign in failed"));
     } finally {
@@ -130,6 +145,10 @@ export function SignIn() {
   return (
     <div className={AUTH_BOX}>
       <h2 className={AUTH_HEADING}>Sign In</h2>
+      <button type="button" onClick={handleGoogle} className={AUTH_BTN_SECONDARY}>
+        Continue with Google
+      </button>
+      <div className="text-center my-4 text-[var(--color-text-subtle)] text-[13px]">or</div>
       <form onSubmit={handleSignIn}>
         <label htmlFor={emailId} className="sr-only">
           Email
@@ -166,10 +185,6 @@ export function SignIn() {
           {loading ? "Signing in..." : "Sign In"}
         </button>
       </form>
-      <div className="text-center my-4 text-[var(--color-text-subtle)] text-[13px]">or</div>
-      <button type="button" onClick={handleGoogle} className={AUTH_BTN_SECONDARY}>
-        Continue with Google
-      </button>
       <p className="text-center mt-3">
         <button type="button" onClick={() => setForgotMode(true)} className={AUTH_LINK}>
           Forgot password?
