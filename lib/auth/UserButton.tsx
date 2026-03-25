@@ -77,9 +77,10 @@ export function UserButton() {
         aria-haspopup="menu"
         aria-label="User menu"
         className="w-9 h-9 rounded-full overflow-hidden border-2 border-[var(--color-border)] cursor-pointer bg-[var(--color-bg-elevated)] p-0 flex items-center justify-center text-[var(--color-text-primary)] font-semibold text-sm"
+        style={{ width: 36, height: 36, minWidth: 36, maxWidth: 36, overflow: 'hidden', borderRadius: '9999px' }}
       >
         {user.imageUrl ? (
-          <img src={user.imageUrl} alt="" className="w-full h-full object-cover" />
+          <img src={user.imageUrl} alt="" className="w-full h-full object-cover" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '9999px' }} />
         ) : (
           initials
         )}
