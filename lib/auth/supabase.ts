@@ -1,9 +1,15 @@
-import { createClient, type SupabaseClient } from "@supabase/supabase-js";
+import { type SupabaseClient } from "@supabase/supabase-js";
+import { createBrowserClient } from "@supabase/ssr";
 
 let _supabase: SupabaseClient | null = null;
 
 /**
- * Get or create a Supabase client singleton.
+ * Get or create a Supabase browser client singleton.
+ * Uses @supabase/ssr's createBrowserClient which:
+ * - Stores session in cookies (readable by middleware/SSR)
+ * - Uses PKCE flow by default (required for OAuth providers like Google)
+ * - Handles token refresh automatically
+ *
  * Accepts an optional factory for dependency injection in tests.
  */
 export function getSupabase(factory?: () => SupabaseClient): SupabaseClient {
@@ -38,13 +44,9 @@ export function getSupabase(factory?: () => SupabaseClient): SupabaseClient {
     );
   }
 
-  _supabase = createClient(url, key, {
-    auth: {
-      flowType: 'pkce',
-      detectSessionInUrl: true,
-      autoRefreshToken: true,
-    },
-  });
+  // createBrowserClient stores session in cookies (not localStorage)
+  // and uses PKCE flow by default — required for Google OAuth to work
+  _supabase = createBrowserClient(url, key) as unknown as SupabaseClient;
   return _supabase;
 }
 

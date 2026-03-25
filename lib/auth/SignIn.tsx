@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState, useId, useEffect } from "react";
+import React, { useState, useId } from "react";
 import { getSupabase } from "./supabase";
-import { forgotPassword, useAuth } from "./provider";
+import { forgotPassword } from "./provider";
 import { getErrorMessage, getRedirectUrl } from "./helpers";
 import {
   AUTH_BOX,
@@ -89,10 +89,13 @@ function ForgotPasswordForm({
 
 export function SignIn({
   afterSignInUrl = "/dashboard",
+  redirectUrl,
 }: {
   routing?: string;
   path?: string;
   afterSignInUrl?: string;
+  redirectUrl?: string;
+  appearance?: unknown;
 } = {}) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -101,14 +104,7 @@ export function SignIn({
   const [forgotMode, setForgotMode] = useState(false);
   const emailId = useId();
   const passwordId = useId();
-  const { isSignedIn, isLoaded } = useAuth();
-
-  // Redirect after successful sign-in
-  useEffect(() => {
-    if (isLoaded && isSignedIn) {
-      window.location.href = afterSignInUrl;
-    }
-  }, [isLoaded, isSignedIn, afterSignInUrl]);
+  const dest = afterSignInUrl || redirectUrl || "/dashboard";
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -117,19 +113,20 @@ export function SignIn({
     try {
       const { error: err } = await getSupabase().auth.signInWithPassword({ email, password });
       if (err) throw err;
-      // Redirect will happen via useEffect when isSignedIn updates
+      // Hard redirect after successful sign-in
+      window.location.href = dest;
     } catch (err: unknown) {
       setError(getErrorMessage(err, "Sign in failed"));
-    } finally {
       setLoading(false);
     }
   };
 
   const handleGoogle = async () => {
     setError(null);
+    const callbackUrl = `${window.location.origin}/auth/callback?next=${encodeURIComponent(dest)}`;
     const { error: err } = await getSupabase().auth.signInWithOAuth({
       provider: "google",
-      options: { redirectTo: getRedirectUrl("/auth/callback") },
+      options: { redirectTo: callbackUrl },
     });
     if (err) setError(err.message);
   };

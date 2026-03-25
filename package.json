@@ -60,5 +60,8 @@
     "vitest": "^3.0.0"
   },
   "module": "./dist/index.mjs",
-  "types": "./dist/index.d.ts"
+  "types": "./dist/index.d.ts",
+  "dependencies": {
+    "@supabase/ssr": "^0.9.0"
+  }
 }
