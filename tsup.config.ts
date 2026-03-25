@@ -9,6 +9,7 @@ export default defineConfig({
     'lib/theme': 'lib/theme.tsx',
     'lib/config': 'lib/config.ts',
     'lib/api': 'lib/api.ts',
+    'lib/server-auth': 'lib/server-auth/index.ts',
     'components/Footer': 'components/Footer.tsx',
     'components/ErrorBoundary': 'components/ErrorBoundary.tsx',
   },

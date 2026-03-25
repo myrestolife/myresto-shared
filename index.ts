@@ -27,6 +27,17 @@ export {
 } from "./lib/auth";
 export type { PublicMetadata, ClerkCompatibleUser, AuthContextValue } from "./lib/auth";
 
+// Server-side Auth
+export {
+  getAdminClient,
+  resetAdminClient,
+  decodeToken,
+  getUserId,
+  isSuperAdmin,
+  authorize,
+} from "./lib/server-auth";
+export type { AuthorizeOptions, AuthorizeResult } from "./lib/server-auth";
+
 // Authorization
 export {
   useIsSuperAdmin,
