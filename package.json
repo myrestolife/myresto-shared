@@ -10,7 +10,12 @@
     "./lib/auth": "./lib/auth/index.tsx",
     "./lib/authorization": "./lib/authorization.tsx",
     "./lib/theme": "./lib/theme.tsx",
-    "./components/*": "./components/*.tsx"
+    "./lib/brand": "./lib/brand.ts",
+    "./lib/config": "./lib/config.ts",
+    "./lib/api": "./lib/api.ts",
+    "./components/*": "./components/*.tsx",
+    "./components/Footer": "./components/Footer.tsx",
+    "./components/ErrorBoundary": "./components/ErrorBoundary.tsx"
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
@@ -19,7 +24,8 @@
     "test:coverage": "vitest run --coverage",
     "test:watch": "vitest",
     "format:check": "prettier --check .",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "build": "tsup"
   },
   "peerDependencies": {
     "@supabase/supabase-js": ">=2",
@@ -48,7 +54,10 @@
     "prettier": "^3.4.0",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
+    "tsup": "^8.5.1",
     "typescript": "^5.9.3",
     "vitest": "^3.0.0"
-  }
+  },
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts"
 }

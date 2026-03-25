@@ -60,8 +60,6 @@ export { validateEmail, validatePassword, validateRequired, validate } from "./l
 export type { ValidationResult } from "./lib/validation";
 
 // Security headers
-export { withSecurityHeaders, getSecurityHeaders } from "./lib/security-headers";
-export type { SecurityHeadersConfig } from "./lib/security-headers";
 
 // Metrics
 export { createMetrics, noopMetrics } from "./lib/metrics";
