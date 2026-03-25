@@ -16,7 +16,10 @@
     "./lib/server-auth": "./lib/server-auth/index.ts",
     "./components/*": "./components/*.tsx",
     "./components/Footer": "./components/Footer.tsx",
-    "./components/ErrorBoundary": "./components/ErrorBoundary.tsx"
+    "./components/ErrorBoundary": "./components/ErrorBoundary.tsx",
+    "./components/Toast": "./components/Toast.tsx",
+    "./components/Spinner": "./components/Spinner.tsx",
+    "./components/EmptyState": "./components/EmptyState.tsx"
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
