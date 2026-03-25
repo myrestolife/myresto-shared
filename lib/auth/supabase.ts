@@ -38,7 +38,13 @@ export function getSupabase(factory?: () => SupabaseClient): SupabaseClient {
     );
   }
 
-  _supabase = createClient(url, key);
+  _supabase = createClient(url, key, {
+    auth: {
+      flowType: 'pkce',
+      detectSessionInUrl: true,
+      autoRefreshToken: true,
+    },
+  });
   return _supabase;
 }
 
