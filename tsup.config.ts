@@ -21,6 +21,7 @@ export default defineConfig({
     'lib/ratelimit': 'lib/ratelimit.ts',
     'components/NavbarShell': 'components/NavbarShell.tsx',
     'components/AuthPageLayout': 'components/AuthPageLayout.tsx',
+    'components/Navbar': 'components/Navbar.tsx',
   },
   format: ['esm', 'cjs'],
   dts: false,

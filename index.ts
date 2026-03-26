@@ -103,3 +103,5 @@ export { default as Spinner } from "./components/Spinner";
 export { default as EmptyState } from "./components/EmptyState";
 export { default as NavbarShell } from "./components/NavbarShell";
 export { default as AuthPageLayout } from "./components/AuthPageLayout";
+export { default as Navbar } from "./components/Navbar";
+export type { NavTab, NavbarProps } from "./components/Navbar";
