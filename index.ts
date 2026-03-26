@@ -80,9 +80,26 @@ export type { MetricType, MetricEvent, MetricsOptions, Metrics } from "./lib/met
 export { checkHealth, createSupabaseCheck } from "./lib/health";
 export type { HealthCheckResult, HealthCheckFn } from "./lib/health";
 
+// Time formatting
+export { timeAgo } from "./lib/timeAgo";
+
+// Middleware
+export { createSupabaseMiddleware } from "./lib/middleware";
+export type { MiddlewareConfig } from "./lib/middleware";
+
+// R2 Storage
+export { createR2Client } from "./lib/r2";
+export type { R2Config } from "./lib/r2";
+
+// Rate Limiting
+export { createRateLimiter } from "./lib/ratelimit";
+export type { RateLimitTier, RateLimitConfig, RateLimitResult, RateLimitOptions } from "./lib/ratelimit";
+
 // Components
 export { default as Footer } from "./components/Footer";
 export { ErrorBoundary } from "./components/ErrorBoundary";
 export { ToastProvider, useToast } from "./components/Toast";
 export { default as Spinner } from "./components/Spinner";
 export { default as EmptyState } from "./components/EmptyState";
+export { default as NavbarShell } from "./components/NavbarShell";
+export { default as AuthPageLayout } from "./components/AuthPageLayout";

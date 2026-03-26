@@ -15,6 +15,12 @@ export default defineConfig({
     'components/Toast': 'components/Toast.tsx',
     'components/Spinner': 'components/Spinner.tsx',
     'components/EmptyState': 'components/EmptyState.tsx',
+    'lib/timeAgo': 'lib/timeAgo.ts',
+    'lib/middleware': 'lib/middleware.ts',
+    'lib/r2': 'lib/r2.ts',
+    'lib/ratelimit': 'lib/ratelimit.ts',
+    'components/NavbarShell': 'components/NavbarShell.tsx',
+    'components/AuthPageLayout': 'components/AuthPageLayout.tsx',
   },
   format: ['esm', 'cjs'],
   dts: false,
@@ -24,7 +30,7 @@ export default defineConfig({
   splitting: false,
   sourcemap: false,
   clean: true,
-  external: ['react', 'react-dom', 'next', '@supabase/supabase-js', '@supabase/ssr'],
+  external: ['react', 'react-dom', 'next', '@supabase/supabase-js', '@supabase/ssr', '@aws-sdk/client-s3', '@upstash/ratelimit', '@upstash/redis'],
   esbuildOptions(options) {
     options.jsx = 'automatic';
   },

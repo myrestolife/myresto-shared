@@ -19,7 +19,13 @@
     "./components/ErrorBoundary": "./components/ErrorBoundary.tsx",
     "./components/Toast": "./components/Toast.tsx",
     "./components/Spinner": "./components/Spinner.tsx",
-    "./components/EmptyState": "./components/EmptyState.tsx"
+    "./components/EmptyState": "./components/EmptyState.tsx",
+    "./lib/timeAgo": "./lib/timeAgo.ts",
+    "./lib/middleware": "./lib/middleware.ts",
+    "./lib/r2": "./lib/r2.ts",
+    "./lib/ratelimit": "./lib/ratelimit.ts",
+    "./components/NavbarShell": "./components/NavbarShell.tsx",
+    "./components/AuthPageLayout": "./components/AuthPageLayout.tsx"
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
@@ -32,10 +38,18 @@
     "build": "tsup"
   },
   "peerDependencies": {
+    "@aws-sdk/client-s3": ">=3",
     "@supabase/supabase-js": ">=2",
+    "@upstash/ratelimit": ">=2",
+    "@upstash/redis": ">=1",
     "next": ">=15",
     "react": ">=19",
     "react-dom": ">=19"
+  },
+  "peerDependenciesMeta": {
+    "@aws-sdk/client-s3": { "optional": true },
+    "@upstash/ratelimit": { "optional": true },
+    "@upstash/redis": { "optional": true }
   },
   "devDependencies": {
     "@eslint/js": "^9.0.0",

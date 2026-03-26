@@ -14,7 +14,7 @@ interface ThemeContextValue {
   toggleTheme: () => void;
 }
 
-const STORAGE_KEY = "myresto-theme";
+const STORAGE_KEY = "theme";
 const DEFAULT_THEME: Theme = "dark";
 
 // ---------------------------------------------------------------------------
