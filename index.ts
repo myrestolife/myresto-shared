@@ -70,6 +70,10 @@ export {
 export { validateEmail, validatePassword, validateRequired, validate } from "./lib/validation";
 export type { ValidationResult } from "./lib/validation";
 
+// Auth callback
+export { handleAuthCallback } from "./lib/auth-callback";
+export type { AuthCallbackOptions } from "./lib/auth-callback";
+
 // Security headers
 
 // Metrics
