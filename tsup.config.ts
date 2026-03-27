@@ -26,6 +26,7 @@ export default defineConfig({
     'components/NotFoundPage': 'components/NotFoundPage.tsx',
     'components/FavoriteButton': 'components/FavoriteButton.tsx',
     'components/AuthPageLayout': 'components/AuthPageLayout.tsx',
+    'components/Navbar': 'components/Navbar.tsx',
   },
   format: ['esm', 'cjs'],
   dts: false,

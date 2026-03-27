@@ -70,9 +70,11 @@ export {
 export { validateEmail, validatePassword, validateRequired, validate } from "./lib/validation";
 export type { ValidationResult } from "./lib/validation";
 
+// Auth callback
+export { handleAuthCallback } from "./lib/auth-callback";
+export type { AuthCallbackOptions } from "./lib/auth-callback";
+
 // Security headers
-export { withSecurityHeaders, getSecurityHeaders } from "./lib/security-headers";
-export type { SecurityHeadersConfig } from "./lib/security-headers";
 
 // Metrics
 export { createMetrics, noopMetrics } from "./lib/metrics";
@@ -84,6 +86,9 @@ export type { HealthCheckResult, HealthCheckFn } from "./lib/health";
 
 // Time formatting
 export { timeAgo } from "./lib/timeAgo";
+
+// Supabase server client
+export { createMiddlewareSupabaseClient } from "./lib/supabase-server";
 
 // Middleware
 export { createSupabaseMiddleware } from "./lib/middleware";
@@ -97,25 +102,13 @@ export type { R2Config } from "./lib/r2";
 export { createRateLimiter } from "./lib/ratelimit";
 export type { RateLimitTier, RateLimitConfig, RateLimitResult, RateLimitOptions } from "./lib/ratelimit";
 
-// Auth callback handler
-export { createAuthCallbackHandler } from "./lib/auth-callback";
-export type { AuthCallbackConfig } from "./lib/auth-callback";
-
-// Health handler
-export { createHealthHandler } from "./lib/health-handler";
-export type { HealthCheckDef } from "./lib/health-handler";
-
 // Components
 export { default as Footer } from "./components/Footer";
 export { ErrorBoundary } from "./components/ErrorBoundary";
 export { ToastProvider, useToast } from "./components/Toast";
 export { default as Spinner } from "./components/Spinner";
 export { default as EmptyState } from "./components/EmptyState";
+export { default as NavbarShell } from "./components/NavbarShell";
 export { default as AuthPageLayout } from "./components/AuthPageLayout";
-export { default as ThemeToggle } from "./components/ThemeToggle";
-export { SkipToContent, default as SkipToContentDefault } from "./components/SkipToContent";
 export { default as Navbar } from "./components/Navbar";
-export type { NavTab, NavbarConfig } from "./components/Navbar";
-export { default as ErrorPage } from "./components/ErrorPage";
-export { default as NotFoundPage } from "./components/NotFoundPage";
-export { default as FavoriteButton } from "./components/FavoriteButton";
+export type { NavTab, NavbarProps } from "./components/Navbar";
