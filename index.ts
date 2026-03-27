@@ -87,6 +87,9 @@ export type { HealthCheckResult, HealthCheckFn } from "./lib/health";
 // Time formatting
 export { timeAgo } from "./lib/timeAgo";
 
+// Supabase server client
+export { createMiddlewareSupabaseClient } from "./lib/supabase-server";
+
 // Middleware
 export { createSupabaseMiddleware } from "./lib/middleware";
 export type { MiddlewareConfig } from "./lib/middleware";

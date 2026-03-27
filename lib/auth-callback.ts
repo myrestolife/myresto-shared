@@ -17,8 +17,8 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import { createServerClient } from "@supabase/ssr";
 import { APP_DOMAINS } from "./config";
+import { createMiddlewareSupabaseClient } from "./supabase-server";
 
 /** Set of root domains derived from the APP_DOMAINS allowlist. */
 const KNOWN_DOMAINS = Object.keys(APP_DOMAINS);
@@ -82,22 +82,7 @@ export async function handleAuthCallback(
   if (code) {
     const response = NextResponse.redirect(`${origin}${next}`);
 
-    const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        cookies: {
-          getAll() {
-            return req.cookies.getAll();
-          },
-          setAll(cookiesToSet) {
-            cookiesToSet.forEach(({ name, value, options }) => {
-              response.cookies.set(name, value, options);
-            });
-          },
-        },
-      },
-    );
+    const supabase = createMiddlewareSupabaseClient(req, response);
 
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
