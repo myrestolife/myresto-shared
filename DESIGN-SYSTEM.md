@@ -276,21 +276,35 @@ theme: {
 ```
 
 ```html
-<!-- Standard link -->
-<a class="text-text-primary no-underline
-          hover:text-accent hover:underline underline-offset-4
+<!-- Inline body link (within paragraphs, descriptions) — gets underline -->
+<a class="text-accent no-underline
+          hover:underline underline-offset-4
           active:text-accent-hover
           transition-colors duration-150">
   View Build
 </a>
 
-<!-- Muted link (nav, metadata) -->
-<a class="text-text-muted no-underline
-          hover:text-text-primary hover:underline underline-offset-4
+<!-- Navigation/action link (CTAs, "View all →", beside buttons) — no underline -->
+<a class="text-text-primary no-underline
+          hover:text-accent
+          active:text-accent-hover
           transition-colors duration-150">
-  See all events
+  Explore Vehicles →
+</a>
+
+<!-- Muted/secondary link (footer, metadata, nav tabs) — no underline -->
+<a class="text-text-muted no-underline
+          hover:text-text-primary
+          transition-colors duration-150">
+  Privacy
 </a>
 ```
+
+**When to use underline on hover:**
+- ✅ Inline body text links (inside paragraphs, descriptions, articles)
+- ❌ Navigation links (navbar, footer, sidebar)
+- ❌ Action links next to buttons ("Explore Vehicles →", "View all →")
+- ❌ Metadata links (@username, tag pills, breadcrumbs)
 
 ---
 
@@ -491,7 +505,9 @@ Use Tailwind's `group` pattern so child images react to the parent hover.
 
 | Element | Default | Hover | Active | Focus | Disabled | Transition |
 |---------|---------|-------|--------|-------|----------|-----------|
-| Link | `text-primary` | `text-accent + underline` | `text-accent-hover` | — | — | `colors 150ms` |
+| Inline Link | `text-accent` | `underline` | `text-accent-hover` | — | — | `colors 150ms` |
+| Nav/Action Link | `text-primary` | `text-accent` (no underline) | `text-accent-hover` | — | — | `colors 150ms` |
+| Muted Link | `text-muted` | `text-primary` (no underline) | — | — | — | `colors 150ms` |
 | Primary Button | `bg-accent` | `bg-accent-hover` | `scale(0.98)` | `ring-2 ring-accent/30` | `opacity-50` | `all 150ms` |
 | Ghost Button | `border-border` | `border-hover + bg-surface` | `scale(0.98)` | `ring-2 ring-accent/30` | `opacity-50` | `all 200ms` |
 | Danger Button | `bg-red-600` | `bg-red-700` | `scale(0.98)` | `ring-2 ring-red-500/30` | `opacity-50` | `all 150ms` |
