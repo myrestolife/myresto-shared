@@ -1,0 +1,14 @@
+__tests__/
+*.test.ts
+*.test.tsx
+*.spec.ts
+*.spec.tsx
+.github/
+.eslintrc*
+eslint.config.*
+vitest.config.*
+tsup.config.*
+tsconfig.json
+.prettierrc*
+coverage/
+dist/
