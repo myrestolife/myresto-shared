@@ -171,6 +171,9 @@ export default function Footer({
 
           {/* Right: copyright + legal + hash */}
           <div className="flex items-center gap-2 flex-wrap justify-center text-[11px] text-[var(--color-text-subtle,#2a4a6a)]">
+            {commitHash && (
+              <span className="opacity-40">{commitHash}</span>
+            )}
             <span>© {new Date().getFullYear()} {appName}</span>
             {legalLinks && legalLinks.map((link) => (
               <Fragment key={link.href}>
@@ -184,12 +187,6 @@ export default function Footer({
                 </a>
               </Fragment>
             ))}
-            {commitHash && (
-              <>
-                <span className="text-[var(--color-border)]">·</span>
-                <span className="opacity-40">{commitHash}</span>
-              </>
-            )}
           </div>
         </div>
       </div>
