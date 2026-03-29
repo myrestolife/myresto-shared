@@ -24,6 +24,13 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish
-        run: npm publish
+        run: |
+          # Temporarily set package name to match GitHub org for registry
+          node -e "
+            const pkg = require('./package.json');
+            pkg.name = '@myrestolife/shared';
+            require('fs').writeFileSync('package.json', JSON.stringify(pkg, null, 2));
+          "
+          npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
