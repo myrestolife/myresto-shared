@@ -29,9 +29,9 @@ Every app follows the **"MyResto + Noun"** convention:
 | App | Full Name | Accent Color | Personality |
 |-----|-----------|--------------|-------------|
 | Garage | MyRestoGarage | Blue `#3B82F6` | Builds & Mods |
-| Event | MyRestoEvent | Emerald `#10B981` | Shows & Meetups |
-| Club | MyRestoClub | Orange `#E67E22` | Community |
-| Life | MyRestoLife | Coral/Orange `#E67E22` | Lifestyle & Content |
+| Event | MyRestoEvent | Amber `#F59E0B` | Shows & Meetups |
+| Club | MyRestoClub | Green `#10B981` | Community |
+| Life | MyRestoLife | Red `#EF4444` | Lifestyle & Content |
 
 ### Design Philosophy
 - **Dark-first**: All apps ship with a dark theme by default. Light mode is additive.
@@ -86,18 +86,18 @@ Each app defines these in its own `globals.css`:
 --color-btn-primary-text: #ffffff;
 
 /* ── Event ── */
---color-accent:           #10B981;  /* Tailwind emerald-500 */
---color-accent-hover:     #059669;  /* emerald-600 */
---color-btn-primary-text: #000000;  /* dark text on light green */
+--color-accent:           #F59E0B;  /* Tailwind amber-500 */
+--color-accent-hover:     #D97706;  /* amber-600 */
+--color-btn-primary-text: #000000;  /* dark text on light amber */
 
 /* ── Club ── */
---color-accent:           #E67E22;  /* orange */
---color-accent-hover:     #CA6B1B;  /* darker orange */
+--color-accent:           #10B981;  /* Tailwind emerald-500 */
+--color-accent-hover:     #059669;  /* emerald-600 */
 --color-btn-primary-text: #ffffff;
 
 /* ── Life ── */
---color-accent:           #E67E22;  /* coral/orange — RENAME from --color-primary */
---color-accent-hover:     #CA6B1B;
+--color-accent:           #EF4444;  /* Tailwind red-500 */
+--color-accent-hover:     #DC2626;  /* red-600 */
 --color-btn-primary-text: #ffffff;
 --bg-primary:             #0f0f0f;  /* Life uses true black */
 ```
