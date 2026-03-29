@@ -1,7 +1,14 @@
 {
   "name": "@myresto/shared",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Shared utilities and components for MyResto Next.js apps",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/myrestolife/myresto-shared.git"
+  },
   "type": "module",
   "main": "./index.ts",
   "exports": {
