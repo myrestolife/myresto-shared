@@ -189,7 +189,7 @@ export default function Footer({
 
         {/* ── Hash Row ── */}
         {commitHash && (
-          <div className="text-right mt-2">
+          <div className="text-right mt-1">
             <span className="text-[10px] text-[var(--color-text-subtle,#2a4a6a)] opacity-40">{commitHash}</span>
           </div>
         )}
