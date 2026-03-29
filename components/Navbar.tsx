@@ -30,6 +30,8 @@ export interface NavbarProps {
   signInHref?: string;
   /** Slot for app-local ThemeToggle (rendered next to sign-in/user controls) */
   themeToggle?: React.ReactNode;
+  /** Skip auth components (SignedIn/SignedOut/UserButton) — for landing pages without AuthProvider */
+  noAuth?: boolean;
 }
 
 export default function Navbar({
@@ -38,6 +40,7 @@ export default function Navbar({
   cta,
   signInHref = '/sign-in',
   themeToggle,
+  noAuth = false,
 }: NavbarProps) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -180,7 +183,7 @@ export default function Navbar({
                 {tab.label}
               </Link>
             ))}
-            {authTabs.length > 0 && (
+            {!noAuth && authTabs.length > 0 && (
               <SignedIn>
                 {authTabs.map((tab) => (
                   <Link key={tab.href} href={tab.href} className={tabClass(tab.href, tab.exact)}>
@@ -189,7 +192,7 @@ export default function Navbar({
                 ))}
               </SignedIn>
             )}
-            {guestTabs.length > 0 && (
+            {!noAuth && guestTabs.length > 0 && (
               <SignedOut>
                 {guestTabs.map((tab) => (
                   <Link key={tab.href} href={tab.href} className={tabClass(tab.href, tab.exact)}>
@@ -203,33 +206,42 @@ export default function Navbar({
 
         {/* ── Right: Desktop Actions ───────────────────────────────────── */}
         <div className="hidden md:flex items-center gap-2">
-          <SignedOut>
-            <Link
-              href={signInHref}
-              className="px-3.5 py-1.5 rounded-lg text-xs font-semibold text-[var(--color-ghost-text)] border border-[var(--color-ghost-border)] hover:border-[var(--color-border-hover)] transition-colors"
-            >
-              Sign In
-            </Link>
-          </SignedOut>
-          <SignedIn>
-            {cta && (
-              <Link
-                href={cta.href}
-                className="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-[var(--color-accent)] text-[var(--color-btn-primary-text)] hover:bg-[var(--color-accent-hover)] transition-colors"
-              >
-                {cta.label}
-              </Link>
-            )}
-            <UserButton />
-          </SignedIn>
-          {themeToggle}
+          {noAuth ? (
+            /* No auth — just show theme toggle if present */
+            themeToggle
+          ) : (
+            <>
+              <SignedOut>
+                <Link
+                  href={signInHref}
+                  className="px-3.5 py-1.5 rounded-lg text-xs font-semibold text-[var(--color-ghost-text)] border border-[var(--color-ghost-border)] hover:border-[var(--color-border-hover)] transition-colors"
+                >
+                  Sign In
+                </Link>
+              </SignedOut>
+              <SignedIn>
+                {cta && (
+                  <Link
+                    href={cta.href}
+                    className="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-[var(--color-accent)] text-[var(--color-btn-primary-text)] hover:bg-[var(--color-accent-hover)] transition-colors"
+                  >
+                    {cta.label}
+                  </Link>
+                )}
+                <UserButton />
+              </SignedIn>
+              {themeToggle}
+            </>
+          )}
         </div>
 
         {/* ── Mobile: UserButton + Hamburger ──────────────────────────── */}
         <div className="flex md:hidden items-center gap-1">
-          <SignedIn>
-            <UserButton />
-          </SignedIn>
+          {!noAuth && (
+            <SignedIn>
+              <UserButton />
+            </SignedIn>
+          )}
           <button
             ref={menuButtonRef}
             onClick={() => setMobileOpen(!mobileOpen)}
@@ -278,7 +290,7 @@ export default function Navbar({
             </Link>
           ))}
 
-          {authTabs.length > 0 && (
+          {!noAuth && authTabs.length > 0 && (
             <SignedIn>
               {authTabs.map((tab) => (
                 <Link
@@ -294,7 +306,7 @@ export default function Navbar({
             </SignedIn>
           )}
 
-          {cta && (
+          {!noAuth && cta && (
             <SignedIn>
               <Link
                 href={cta.href}
@@ -307,7 +319,7 @@ export default function Navbar({
             </SignedIn>
           )}
 
-          {guestTabs.length > 0 && (
+          {!noAuth && guestTabs.length > 0 && (
             <SignedOut>
               {guestTabs.map((tab) => (
                 <Link
@@ -323,18 +335,20 @@ export default function Navbar({
             </SignedOut>
           )}
 
-          <SignedOut>
-            <div className="pt-2 border-t border-[var(--color-border)] mt-2 flex flex-col gap-2">
-              <Link
-                href={signInHref}
-                className="block text-center px-4 py-2.5 rounded-lg text-sm font-semibold text-[var(--color-ghost-text)] border border-[var(--color-ghost-border)]"
-                onClick={() => setMobileOpen(false)}
-                role="menuitem"
-              >
-                Sign In
-              </Link>
-            </div>
-          </SignedOut>
+          {!noAuth && (
+            <SignedOut>
+              <div className="pt-2 border-t border-[var(--color-border)] mt-2 flex flex-col gap-2">
+                <Link
+                  href={signInHref}
+                  className="block text-center px-4 py-2.5 rounded-lg text-sm font-semibold text-[var(--color-ghost-text)] border border-[var(--color-ghost-border)]"
+                  onClick={() => setMobileOpen(false)}
+                  role="menuitem"
+                >
+                  Sign In
+                </Link>
+              </div>
+            </SignedOut>
+          )}
 
           {themeToggle && (
             <div className="flex items-center gap-2 pt-2 border-t border-[var(--color-border)] mt-2">
