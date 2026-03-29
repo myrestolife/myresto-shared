@@ -169,11 +169,8 @@ export default function Footer({
             ))}
           </div>
 
-          {/* Right: copyright + legal + hash */}
+          {/* Right: copyright + legal */}
           <div className="flex items-center gap-2 flex-wrap justify-center text-[11px] text-[var(--color-text-subtle,#2a4a6a)]">
-            {commitHash && (
-              <span className="opacity-40">{commitHash}</span>
-            )}
             <span>© {new Date().getFullYear()} {appName}</span>
             {legalLinks && legalLinks.map((link) => (
               <Fragment key={link.href}>
@@ -189,6 +186,13 @@ export default function Footer({
             ))}
           </div>
         </div>
+
+        {/* ── Hash Row ── */}
+        {commitHash && (
+          <div className="text-right mt-2">
+            <span className="text-[10px] text-[var(--color-text-subtle,#2a4a6a)] opacity-40">{commitHash}</span>
+          </div>
+        )}
       </div>
     </footer>
   );
