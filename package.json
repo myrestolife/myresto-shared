@@ -88,7 +88,7 @@
     "react-dom": "^19.2.4",
     "tsup": "^8.5.1",
     "typescript": "^5.9.3",
-    "vitest": "^3.0.0"
+    "vitest": "^4.1.2"
   },
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
