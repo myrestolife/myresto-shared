@@ -93,6 +93,6 @@
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "dependencies": {
-    "@supabase/ssr": "^0.9.0"
+    "@supabase/ssr": "^0.10.0"
   }
 }
